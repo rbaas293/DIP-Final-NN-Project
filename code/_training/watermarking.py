@@ -7,12 +7,15 @@
 #%% Imports
 from PIL import Image, ImageDraw, ImageFont
 import time
+import os 
 
 #%% Variable Definitions:
-IMG_PATH = "current_test_data//kitten.jpg"
-OUTPUT_PATH = "current_test_data//kitten_watermarked_" + time.strftime("%Y%m%d-%H%M%S") + ".jpg"
+pwd = os.path.dirname(os.path.realpath(__file__)) + "//"
+#pwd = pwd
+IMG_PATH = pwd + "current_test_data//kitten.jpg"
+OUTPUT_PATH = pwd + "current_test_data//kitten_watermarked_" + time.strftime("%Y%m%d-%H%M%S") + ".jpg"
 WATERMARK_TEXT = "sheetz"
-FONT_PATH = "current_test_data//BERNHC.TTF"
+FONT_PATH = pwd + "current_test_data//BERNHC.TTF"
 
 #%% Make The Watermark:
 def watermark_text(input_image_path,
@@ -25,7 +28,7 @@ def watermark_text(input_image_path,
 
     black = (3, 8, 12)
     #font = ImageFont.truetype("Pillow/Tests/fonts/FreeMono.ttf", 40)
-    font = ImageFont.truetype(FONT_FILE, size=50)
+    font = ImageFont.truetype(FONT_PATH, size=50)
     drawing.text(pos, text, fill=black, font=font)
     photo.show()
     photo.save(output_image_path)
