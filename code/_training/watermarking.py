@@ -9,6 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 import time
 import os 
 
+
 #%% Variable Definitions:
 pwd = os.path.dirname(os.path.realpath(__file__)) + "//"
 #pwd = pwd
@@ -33,8 +34,8 @@ def watermark_text(input_image_path,
     photo.show()
     photo.save(output_image_path)
 
-#%% Honestly dont know what this does haha
-if __name__ == '__main__':
-    watermark_text(IMG_PATH, OUTPUT_PATH,
-                   text=WATERMARK_TEXT,
-                   pos=(0, 0))
+# #%% Honestly dont know what this does haha
+# if __name__ == '__main__':
+#     watermark_text(IMG_PATH, OUTPUT_PATH,
+#                    text=WATERMARK_TEXT,
+#                    pos=(0, 0))
