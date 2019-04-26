@@ -124,8 +124,7 @@ def watermark_text(input_image_path, output_image_path, text, pos):
 
 
 # create a new directory path string to house the watermarked images (does not actually create the dir)
-watermarked_root = data_root.parent.with_name(str(data_root.name)+"_watermarked")
-
+watermarked_root = data_root.with_name(str(data_root.name)+"_watermarked")
 
 # blank list for strings indicating paths to watermarked photos, in the same order as all_image_paths
 all_watermarked_paths = []
