@@ -13,7 +13,9 @@ import matplotlib.pyplot as plt
 
 print(tf.__version__)
 
-
+#######################################
+########## IMPORT DATASET #############
+#######################################
 # %%import fashion MNIST dataset
 fashion_mnist = keras.datasets.fashion_mnist
 
@@ -54,6 +56,12 @@ test_images = test_images / 255.0
 #     plt.xlabel(class_names[train_labels[i]])
 #     plt.show()
 
+
+#######################################
+######## BUILD & TRAIN MODEL ##########
+#######################################
+
+
 # %%Build the model -- setup the layers
 model = keras.Sequential([
     keras.layers.Flatten(input_shape=(28, 28)),
@@ -67,8 +75,21 @@ model.compile(optimizer='adam',
 # %%Train the Model
 model.fit(train_images, train_labels, epochs=5)
 
+
+#######################################
+########## TEST MODEL #################
+#######################################
+
+
+
 # %%Evaluate Accuracy
 test_loss, test_acc = model.evaluate(test_images, test_labels)
+
+
+#######################################
+########## OUTPUT RESULTS #############
+#######################################
+
 
 print('\nTest accuracy:', test_acc)
 
