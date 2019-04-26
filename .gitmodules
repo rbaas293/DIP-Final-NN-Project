@@ -1,0 +1,3 @@
+[submodule "code/_training/examples/tensorflow-vgg"]
+	path = code/_training/examples/tensorflow-vgg
+	url = https://github.com/machrisaa/tensorflow-vgg

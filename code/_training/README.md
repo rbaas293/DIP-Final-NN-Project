@@ -4,5 +4,6 @@
 * `../imagenet` - Location for different datasets.
 * `../` - Location for script files
 
-# Dependencies
+### Dependencies
+
 * Just over-arching project dependencies.
