@@ -7,11 +7,13 @@
 #%% Imports
 from PIL import Image, ImageDraw, ImageFont
 import time
+
 #%% Variable Definitions:
-IMG_PATH = 'kitten.jpg'
-OUTPUT_PATH = 'kitten_watermarked_' + time.strftime("%Y%m%d-%H%M%S") + '.jpg'
-WATERMARK_TEXT = 'sheetz'
-FONT_FILE = "BERNHC.TTF"
+IMG_PATH = "current_test_data//kitten.jpg"
+OUTPUT_PATH = "current_test_data//kitten_watermarked_" + time.strftime("%Y%m%d-%H%M%S") + ".jpg"
+WATERMARK_TEXT = "sheetz"
+FONT_PATH = "current_test_data//BERNHC.TTF"
+
 #%% Make The Watermark:
 def watermark_text(input_image_path,
                    output_image_path,
