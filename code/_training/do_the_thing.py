@@ -92,6 +92,19 @@ all_image_labels = [label_to_index[pathlib.Path(path).parent.name]
 #################################################################################
 #################### GENERATE A SET OF WATERMARKED IMAGES #######################
 #################################################################################
+"""Import Stuff Created In This Section:
+
+    watermarked_root: a Path variable describing where a shit load of WATERMARKED jpg images are stored
+    all_watermarked_paths: a list of paths that refer to a shit load of WATERMARKED jpg images
+    
+    The following variables still correspond to all_watermarked_paths:
+    all_image_labels: a list of the categories that correspond to each of the images in all_image_paths
+    my_attributions: a dictionary of things that describe the jpg images
+    label_to_index: a dictionary of possible categories for these images
+
+"""
+
+
 pwd = os.path.dirname(os.path.realpath(__file__)) + "//"
 FONT_PATH = pwd + "current_test_data//BERNHC.TTF"
 WATERMARK_TEXT = "SHEETZ"
@@ -110,16 +123,15 @@ def watermark_text(input_image_path, output_image_path, text, pos):
     photo.save(output_image_path)
 
 
-# create a new directory to house the watermarked images
+# create a new directory path string to house the watermarked images (does not actually create the dir)
 watermarked_root = data_root.parent.with_name(str(data_root.name)+"_watermarked")
-# try:
-#     shutil.copytree(data_root, watermarked_root)
-# except shutil.Error as e:  # Directories are the same
-#     print('Directory not copied. Error: %s' % e)
-# except OSError as e:  # Any error saying that the directory doesn't exist
-#     print('Directory not copied. Error: %s' % e)
 
 
+# blank list for strings indicating paths to watermarked photos, in the same order as all_image_paths
+all_watermarked_paths = []
+
+
+print("Creating Watermarked Directory....")
 for img_path in all_image_paths:
     p = pathlib.Path(img_path)
     output_path = watermarked_root/p.parent.name/p.name
@@ -129,6 +141,7 @@ for img_path in all_image_paths:
         text=WATERMARK_TEXT,
         pos=(0, 0)
     )
+    all_watermarked_paths += [str(output_path)]
 
 #################################################################################
 #################### CONVERT FROM JPG TO DATASET ################################
