@@ -1,3 +1,9 @@
 [submodule "code/_training/examples/tensorflow-vgg"]
 	path = code/_training/examples/tensorflow-vgg
 	url = https://github.com/machrisaa/tensorflow-vgg
+[submodule "code/_training/submodules/ImageNet_Utils"]
+	path = code/_training/submodules/ImageNet_Utils
+	url = https://github.com/tzutalin/ImageNet_Utils
+[submodule "code/_training/submodules/imagenet_to_tfrecord"]
+	path = code/_training/submodules/imagenet_to_tfrecord
+	url = https://github.com/shl666/imagenet_to_tfrecord.git
