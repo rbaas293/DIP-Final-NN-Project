@@ -134,19 +134,124 @@ print("Creating Watermarked Directory....")
 for img_path in all_image_paths:
     p = pathlib.Path(img_path)
     output_path = watermarked_root/p.parent.name/p.name
-    watermark_text(
-        img_path,
-        output_path,
-        text=WATERMARK_TEXT,
-        pos=(0, 0)
-    )
+    # watermark_text(
+        # img_path,
+        # output_path,
+        # text=WATERMARK_TEXT,
+        # pos=(0, 0)
+    # )
     all_watermarked_paths += [str(output_path)]
+
 
 #################################################################################
 #################### CONVERT FROM JPG TO DATASET ################################
 #################################################################################
 
 
+def load_and_preprocess_image(img_path):
+    img_raw = tf.io.read_file(img_path)
+    img_tensor=preprocess_image(img_raw)
+    return img_tensor
+
+
+def preprocess_image(image):
+    image = tf.image.decode_jpeg(image, channels=3)
+    image = tf.image.resize(image, [192,192])
+    image /= 255.0
+    return image
+
+
+# The tuples are unpacked into the positional arguments of the mapped function
+def load_and_preprocess_from_path_label(path, label):
+  return load_and_preprocess_image(path), label
+
+def build_from_list(paths, labels):
+    # Build a tf.data.Dataset
+    print("\n\nBuilding A Dataset...")
+    path_ds = tf.data.Dataset.from_tensor_slices(paths)
+    image_ds = path_ds.map(load_and_preprocess_image, num_parallel_calls=AUTOTUNE)
+    label_ds = tf.data.Dataset.from_tensor_slices(tf.cast(labels, tf.int64))
+    ds = tf.data.Dataset.from_tensor_slices((paths, labels))
+
+    image_label_ds = ds.map(load_and_preprocess_from_path_label)
+    print(image_label_ds)
+
+    BATCH_SIZE = 32
+
+    # Setting a shuffle buffer size as large as the dataset ensures that the data is
+    # completely shuffled.
+    ds = image_label_ds.shuffle(buffer_size=len(paths))
+    ds = ds.repeat()
+    ds = ds.batch(BATCH_SIZE)
+    # `prefetch` lets the dataset fetch batches, in the background while the model is training.
+    ds = ds.prefetch(buffer_size=AUTOTUNE)
+    ds = image_label_ds.apply(
+      tf.data.experimental.shuffle_and_repeat(buffer_size=len(labels)))
+    ds = ds.batch(BATCH_SIZE)
+    ds = ds.prefetch(buffer_size=AUTOTUNE)
+    print(ds)
+
+    # The dataset may take a few seconds to start, as it fills its shuffle buffer.
+    image_batch, label_batch = next(iter(ds))
+
+    return image_batch, label_batch
+
+
+
+
+train_og_paths = all_image_paths[:50]
+train_og_labels = all_image_labels[:50]
+test_og_paths = all_image_paths[50:]
+test_og_labels = all_image_labels[50:]
+train_wm_paths = all_watermarked_paths[:50]
+train_wm_labels = all_image_labels[:50]
+test_wm_paths = all_watermarked_paths[50:]
+test_wm_labels = all_image_labels[50:]
+
+
+train_og_image_batch, train_og_label_batch = build_from_list(
+    train_og_paths, train_og_labels)
+
+test_og_image_batch, test_og_label_batch = build_from_list(
+    test_og_paths, test_og_labels)
+
+train_wm_image_batch, train_wm_label_batch = build_from_list(
+    train_wm_paths, train_wm_labels)
+
+test_wm_image_batch, test_wm_label_batch = build_from_list(
+    test_wm_paths, test_wm_labels)
+
 #################################################################################
 ################### END OF FILE #################################################
 #################################################################################
+# %%we need to scale the 0-255 values down to 0-1 before feeding them to the model
+train_og_image_batch = train_og_image_batch / 255.0
+
+test_og_image_batch = test_og_image_batch / 255.0
+
+train_wm_image_batch = train_wm_image_batch / 255.0
+
+test_wm_image_batch = test_wm_image_batch / 255.0
+
+# %%Build the model -- setup the layers
+model = keras.Sequential([
+    keras.layers.Flatten(input_shape=(32, 192, 192, 32)),
+    keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dense(10, activation='softmax')
+])
+# %%Build the model -- compile the model
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+# %%Train the Model
+model.fit(train_og_image_batch, train_og_label_batch, epochs=5)
+
+
+#######################################
+########## TEST MODEL #################
+#######################################
+
+
+
+# %%Evaluate Accuracy
+test_loss, test_acc = model.evaluate(test_og_image_batch, test_og_label_batch)
