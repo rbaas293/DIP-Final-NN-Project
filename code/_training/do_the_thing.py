@@ -1,3 +1,6 @@
+# using tensorflow version 1.13.1
+# python version 3.7.0
+
 """ This file takes code from tensorflow_example, Watermarking.py, get_data_set.py
 The goal is to
 1. download a set of jpg images
@@ -14,6 +17,8 @@ from tensorflow import keras
 
 from PIL import Image, ImageDraw, ImageFont
 import os
+import matplotlib.pyplot as plt
+
 
 tf.enable_eager_execution()
 
@@ -155,12 +160,19 @@ def preprocess_image(image):
 def load_and_preprocess_from_path_label(path, label):
   return load_and_preprocess_image(path), label
 
-def build_from_list(paths, labels):
+
+
+counter = 0
+
+def build_from_list(paths, labels, counter):
     # Build a tf.data.Dataset
-    print("\n\nBuilding A Dataset...")
+
+    print("\n\nBuilding A Dataset...", counter)
+    counter = counter+1
+
     path_ds = tf.data.Dataset.from_tensor_slices(paths)
     image_ds = path_ds.map(load_and_preprocess_image, num_parallel_calls=AUTOTUNE)
-    label_ds = tf.data.Dataset.from_tensor_slices(tf.cast(labels, tf.int64))
+    label_ds = tf.data.Dataset.from_tensor_slices(labels)
     ds = tf.data.Dataset.from_tensor_slices((paths, labels))
 
     image_label_ds = ds.map(load_and_preprocess_from_path_label)
@@ -189,52 +201,52 @@ def build_from_list(paths, labels):
 
 
 
-train_og_paths = all_image_paths[:50]
-train_og_labels = all_image_labels[:50]
-test_og_paths = all_image_paths[50:]
-test_og_labels = all_image_labels[50:]
-train_wm_paths = all_watermarked_paths[:50]
-train_wm_labels = all_image_labels[:50]
-test_wm_paths = all_watermarked_paths[50:]
-test_wm_labels = all_image_labels[50:]
+train_og_paths = all_image_paths[:5]
+train_og_labels = all_image_labels[:5]
+test_og_paths = all_image_paths[5:]
+test_og_labels = all_image_labels[5:]
+train_wm_paths = all_watermarked_paths[:5]
+train_wm_labels = all_image_labels[:5]
+test_wm_paths = all_watermarked_paths[5:]
+test_wm_labels = all_image_labels[5:]
 
 
 train_og_image_batch, train_og_label_batch = build_from_list(
-    train_og_paths, train_og_labels)
+    train_og_paths, train_og_labels, counter)
 
 test_og_image_batch, test_og_label_batch = build_from_list(
-    test_og_paths, test_og_labels)
+    test_og_paths, test_og_labels, counter)
 
-train_wm_image_batch, train_wm_label_batch = build_from_list(
-    train_wm_paths, train_wm_labels)
+#train_wm_image_batch, train_wm_label_batch = build_from_list(
+#   train_wm_paths, train_wm_labels, counter)
 
-test_wm_image_batch, test_wm_label_batch = build_from_list(
-    test_wm_paths, test_wm_labels)
+#test_wm_image_batch, test_wm_label_batch = build_from_list(
+#    test_wm_paths, test_wm_labels, counter)
 
 #################################################################################
 ################### END OF FILE #################################################
 #################################################################################
 # %%we need to scale the 0-255 values down to 0-1 before feeding them to the model
-train_og_image_batch = train_og_image_batch / 255.0
 
-test_og_image_batch = test_og_image_batch / 255.0
-
-train_wm_image_batch = train_wm_image_batch / 255.0
-
-test_wm_image_batch = test_wm_image_batch / 255.0
+print("\n\n DEBUG 1\n\n")
 
 # %%Build the model -- setup the layers
 model = keras.Sequential([
-    keras.layers.Flatten(input_shape=(32, 192, 192, 32)),
+    keras.layers.Flatten(input_shape=(192, 192, 3)),
     keras.layers.Dense(128, activation='relu'),
     keras.layers.Dense(10, activation='softmax')
 ])
+
+
+print("\n\n DEBUG 2\n\n")
 # %%Build the model -- compile the model
 model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
+
+print("\n\n DEBUG 3\n\n")
 # %%Train the Model
-model.fit(train_og_image_batch, train_og_label_batch, epochs=5)
+model.fit(train_og_image_batch, train_og_label_batch)
 
 
 #######################################
@@ -244,4 +256,4 @@ model.fit(train_og_image_batch, train_og_label_batch, epochs=5)
 
 
 # %%Evaluate Accuracy
-test_loss, test_acc = model.evaluate(test_og_image_batch, test_og_label_batch)
+# test_loss, test_acc = model.evaluate(test_og_image_batch, test_og_label_batch)
