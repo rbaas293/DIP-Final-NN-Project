@@ -9,21 +9,11 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pathlib
 import random
-import shutil
-import IPython.display as display
-import matplotlib.pyplot as plt
-
-# TensorFlow and tf.keras
 import tensorflow as tf
 from tensorflow import keras
 
-# Helper libraries
-import numpy as np
-
 from PIL import Image, ImageDraw, ImageFont
-import time
 import os
-# from . import watermarking as WM
 
 tf.enable_eager_execution()
 
