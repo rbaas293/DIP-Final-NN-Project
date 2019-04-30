@@ -7,7 +7,8 @@ The goal is to
 2. generate a second set of jpg images which are watermarked
 3. convert from JPG to a Dataset usable by tensorflow NN's
 """
-
+#%% Import Things
+#Import Things
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pathlib
@@ -19,7 +20,8 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 import matplotlib.pyplot as plt
 
-
+#%% Enable eager
+#Enable eager ... cant do this with nightly builds for -gpu ... also must have version 10.0 of cuda toolkit
 tf.enable_eager_execution()
 
 AUTOTUNE = tf.data.experimental.AUTOTUNE
@@ -37,22 +39,27 @@ AUTOTUNE = tf.data.experimental.AUTOTUNE
 
 """
 
-# download the file
+#%% download the file
+#download the file
 data_root_orig = tf.keras.utils.get_file(
     origin='https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz',
     fname='flower_photos', untar=True)
 
-# save the path where the files were saved
+#%% save the path where the files were saved
+#save the path where the files were saved
 data_root = pathlib.Path(data_root_orig)
 print("JPG images downloaded to the following location: ", data_root)
 
-# generate a list of all the files we just downloaded
+#%% generate a list of all the files we just downloaded
+#generate a list of all the files we just downloaded
 all_image_paths = list(data_root.glob('*/*'))
 all_image_paths = [str(path) for path in all_image_paths]
 
-# shuffle the list of jpg paths
+#%% shuffle the list of jpg paths
+#shuffle the list of jpg paths
 random.shuffle(all_image_paths)
 
+#%% process the LICENSE.txt file, which contains all the info we need to know about the images.
 # process the LICENSE.txt file, which contains all the info we need to know about the images.
 my_attributions = (data_root / "LICENSE.txt").open(encoding='utf-8').readlines()[4:]
 my_attributions = [line.split(' CC-BY') for line in my_attributions]
@@ -60,7 +67,8 @@ my_attributions = dict(my_attributions)
 
 """This function parses out a caption for an image given its path and the overall attribtuions dict"""
 
-
+#%% Run it
+#Run it
 def caption_image(image_path, attributions):
     # added as_posix() to this line, because windows path doesn't match LICENSE.txt format.
     image_rel = pathlib.Path(image_path).relative_to(data_root).as_posix()
@@ -75,12 +83,14 @@ def caption_image(image_path, attributions):
 # #   print()
 
 
-# determine the text for image label possibilities, then assign numbers to those options in a dict
+#%% determine the text for image label possibilities, then assign numbers to those options in a dict
+#determine the text for image label possibilities, then assign numbers to those options in a dict
 label_names = sorted(item.name for item in data_root.glob('*/') if item.is_dir())
 label_to_index = dict((name, index) for index, name in enumerate(label_names))
 print("The label_to_index dict is: ", label_to_index)
 
-# create a list of each images label, corresponding to all_image_paths
+#%% create a list of each images label, corresponding to all_image_paths
+#create a list of each images label, corresponding to all_image_paths
 all_image_labels = [label_to_index[pathlib.Path(path).parent.name]
                     for path in all_image_paths]
 
@@ -99,12 +109,14 @@ all_image_labels = [label_to_index[pathlib.Path(path).parent.name]
 
 """
 
-
+#%% import watermaking paths to variables
+#import watermaking paths to variables
 pwd = os.path.dirname(os.path.realpath(__file__)) + "//"
 FONT_PATH = pwd + "current_test_data//BERNHC.TTF"
 WATERMARK_TEXT = "SHEETZ"
 
-
+#%% Watermark a picture!
+#Watermark a picture!
 def watermark_text(input_image_path, output_image_path, text, pos):
     photo = Image.open(input_image_path)
 
@@ -118,12 +130,13 @@ def watermark_text(input_image_path, output_image_path, text, pos):
     photo.save(output_image_path)
 
 
+#%% create a new directory path string to house the watermarked images (does not actually create the dir)
 # create a new directory path string to house the watermarked images (does not actually create the dir)
 watermarked_root = data_root.with_name(str(data_root.name)+"_watermarked")
 
-# blank list for strings indicating paths to watermarked photos, in the same order as all_image_paths
+#%% makes a blank list for strings indicating paths to watermarked photos, in the same order as all_image_paths
+#makes a blank list for strings indicating paths to watermarked photos, in the same order as all_image_paths
 all_watermarked_paths = []
-
 
 print("Creating Watermarked Directory....")
 for img_path in all_image_paths:
@@ -137,11 +150,10 @@ for img_path in all_image_paths:
     # )
     all_watermarked_paths += [str(output_path)]
 
-
+#%% CONVERT FROM JPG TO DATASET
 #################################################################################
 #################### CONVERT FROM JPG TO DATASET ################################
 #################################################################################
-
 
 def load_and_preprocess_image(img_path):
     img_raw = tf.io.read_file(img_path)
@@ -156,12 +168,14 @@ def preprocess_image(image):
     return image
 
 
-# The tuples are unpacked into the positional arguments of the mapped function
+#%%Below unpacks The tuples into the positional arguments of the mapped function
+#Below unpacks The tuples into the positional arguments of the mapped function
 def load_and_preprocess_from_path_label(path, label):
   return load_and_preprocess_image(path), label
 
 
-
+#%% Set counter to zero and build from the list baby!
+#Set counter to zero and build from the list baby!
 counter = 0
 
 def build_from_list(paths, labels, counter):
@@ -200,7 +214,8 @@ def build_from_list(paths, labels, counter):
 
 
 
-
+#%% Train thing setup 1
+#Train thing setup 1
 train_og_paths = all_image_paths[:5]
 train_og_labels = all_image_labels[:5]
 test_og_paths = all_image_paths[5:]
@@ -210,10 +225,12 @@ train_wm_labels = all_image_labels[:5]
 test_wm_paths = all_watermarked_paths[5:]
 test_wm_labels = all_image_labels[5:]
 
-
+#%% Train thing setup 2
+#Train thing setup 2
 train_og_image_batch, train_og_label_batch = build_from_list(
     train_og_paths, train_og_labels, counter)
-
+#%% Train thing setup 3
+# Train thing setup 3
 test_og_image_batch, test_og_label_batch = build_from_list(
     test_og_paths, test_og_labels, counter)
 
@@ -226,11 +243,12 @@ test_og_image_batch, test_og_label_batch = build_from_list(
 #################################################################################
 ################### END OF FILE #################################################
 #################################################################################
-# %%we need to scale the 0-255 values down to 0-1 before feeding them to the model
-
+#%% Scale the 0-255 values down to 0-1 before feeding them to the model
+#Scale the 0-255 values down to 0-1 before feeding them to the model
 print("\n\n DEBUG 1\n\n")
 
-# %%Build the model -- setup the layers
+#%% Build the model -- setup the layers
+#Build the model -- setup the layers
 model = keras.Sequential([
     keras.layers.Flatten(input_shape=(192, 192, 3)),
     keras.layers.Dense(128, activation='relu'),
@@ -239,13 +257,15 @@ model = keras.Sequential([
 
 
 print("\n\n DEBUG 2\n\n")
-# %%Build the model -- compile the model
+#%% Build the model -- compile the model!!
+#Build the model -- compile the model!!
 model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
 print("\n\n DEBUG 3\n\n")
-# %%Train the Model
+# %%Train the Model Finally!!!
+#Train the Model Finally!!!
 model.fit(train_og_image_batch, train_og_label_batch)
 
 
@@ -255,5 +275,5 @@ model.fit(train_og_image_batch, train_og_label_batch)
 
 
 
-# %%Evaluate Accuracy
+#%% Evaluate Accuracy...uncomment when we get here! will prolly need to transfer to testing directory.
 # test_loss, test_acc = model.evaluate(test_og_image_batch, test_og_label_batch)
