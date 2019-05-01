@@ -1,6 +1,6 @@
-# using tensorflow version 1.13.1
+# using tensorflow version 1.13.0rc0
 # python version 3.7.0
-
+# `#%%` - Signifies the start of a runnable cell for use with `Jupyter Notebooks
 """ This file takes code from tensorflow_example, Watermarking.py, get_data_set.py
 The goal is to
 1. download a set of jpg images
