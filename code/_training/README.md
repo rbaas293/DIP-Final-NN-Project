@@ -1,6 +1,4 @@
-# Instructions to train the NN
-
-## Directory Overview `root/code/_training`
+# Directory Overview `root/code/_training`
 
 * `../current_test_data/` - Constant path directory to have our script pointing to.
 * `../examples/` - Location for different examples....`submoudles` should be used if a repository is avalable.
@@ -8,8 +6,20 @@
 * `../submodules/` - Location for git submodules; to add one: `git submoudle add <url>`.
 * `../` - Location for script files
 
-### Dependencies
+## Dependencies
 
+* If you have `Anaconda3` installed, make sure it is in your `PATH` Enviorment Variable(using admin cmd.exe):
+
+```cmd
+REM If you installed anaconda only for the current user:
+SET PATH=%USERPROFILE%\Anaconda3\Scripts;%PATH%
+
+REM or if you installed anaconda3 for all users:
+SET PATH=C:\ProgramData\Anaconda3\Scripts;%PATH%
+
+REM You may need to LOGOUT and LOGIN again for these changes to take effect.
+```
+  
 * For worry free compatability with `rbaas293`'s tensorflow-gpu setup:
 
 ```powershell
@@ -19,10 +29,10 @@ pip3 install tensorflow==1.13.0rc0 pillow virtualenv jupyter matplotlib numpy
 pip3 install tensorflow-gpu==1.13.0rc0
 ```
 
-* Non-CLI installable for GPU support:
+* Non-CLI installable software for GPU support:
 
 1. [Download & Install CUDA Toolkit 10.0](https://developer.nvidia.com/cuda-10.0-download-archive)
-2. [Download & "Install" cuDNN==>= 7.4.1 [SADLY YOU HAVE TO SIGN UP]](https://developer.nvidia.com/cudnn)
+2. [Download & Install cuDNN==>= 7.4.1 ](https://developer.nvidia.com/cudnn) [SADLY YOU HAVE TO SIGN UP]
 3. Make sure/add the above programs to your PATH (open admin command prompt):
 
 ```cmd
@@ -42,4 +52,4 @@ SET PATH=C:\tools\cuda\bin;%PATH%
 4. A localhost browser window will pop up. the root directory of the repository is shown.
 5. Navigate to `root/code/_training`
 6. Open `do_the_thing.ipynb` and run thru the NN interactivly.
-7. Enjoy and Have FUN!!
+7. Enjoy and have FUN!!
