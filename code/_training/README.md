@@ -19,7 +19,7 @@ SET PATH=C:\ProgramData\Anaconda3\Scripts;%PATH%
 
 REM You may need to LOGOUT and LOGIN again for these changes to take effect.
 ```
-  
+
 * For worry free compatability with `rbaas293`'s tensorflow-gpu setup:
 
 ```powershell

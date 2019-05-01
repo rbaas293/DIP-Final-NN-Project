@@ -2,11 +2,11 @@
 
 ## Course: EECE 5142 - DIGITAL IMAGE PROCESSING Final NN Project
 
-### Project Participants: Josh Ohm, Elizabeth Sheetz, and Ryan Baas
+### Project Participants: Elizabeth Sheetz, Ryan Baas, and  Josh Ohm
 
 #### Details
 
-* Directory Structure is as follows
+* Directory Structure is as follows:
 
 ```
 ../assests - directory for images used in markdown documents
@@ -14,10 +14,11 @@
 ../code/_training - main code directy, this is where you go to run `do_the_thing.py` which is all that needs to be run for this project.
 ```
 
-* All other major directory stuctures have A dedicated `README.md` to guide the user through there purpose.
+* All other major directory structures have a dedicated `README.md` to guide the user through there purpose.
+* Please refer to `ProposedMethods.md` for the goals of this project. 
+* To view the results of this project , please see `Final NN Project Report.pdf`.
 
-##### Refrences
+##### Quickstart
 
-* https://www.tensorflow.org/alpha/tutorials/load_data/images#setup
-* and lots more to be added 
+Please refer to information in, `root/code/_training/README.md`
 

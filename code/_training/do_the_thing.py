@@ -111,9 +111,10 @@ all_image_labels = [label_to_index[pathlib.Path(path).parent.name]
 
 #%% import watermaking paths to variables
 #import watermaking paths to variables
-pwd = os.path.dirname(os.path.realpath(__file__)) + "//"
+pwd = os.path.abspath('') + "//" # Dont know why I thought that wouldnt work in the first place lol
 FONT_PATH = pwd + "current_test_data//BERNHC.TTF"
-WATERMARK_TEXT = "SHEETZ"
+WATERMARK_TEXT = "SHEETZ | BAAS | OHM"
+
 
 #%% Watermark a picture!
 #Watermark a picture!

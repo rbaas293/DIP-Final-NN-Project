@@ -5,4 +5,4 @@
 ## Why have this directory?
 
 Its purpose is that we can have multiple sets of data(pictures) and whenever we want to run the test
-on a diffrent set, all we need to do is copy the contense on `../<set-name>` to `root/code/current_test_data`.
+on a different set, all we need to do is copy  `../<set-name>` to `root/code/current_test_data`.
